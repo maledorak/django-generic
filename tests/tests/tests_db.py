@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from django_generic.db import pks_from_iterable
+from django_generic.db import pks_from_iterable, remove_duplicates_from_model
 from tests.factories import ExampleModelFactory
 from tests.models import ExampleModel
 
@@ -64,3 +64,21 @@ class TestPksFromIterable(TestCase):
         self.assertEqual(pks[0], expected_data_with_unique[0])
         self.assertEqual(pks[1], expected_data_with_unique[1])
         self.assertEqual(pks[2], expected_data_with_unique[2])
+
+
+class TestRemoveDuplicates(TestCase):
+    def setUp(self):
+        self.obj1 = ExampleModelFactory(name='the_same_name', field1='some')
+        self.obj2 = ExampleModelFactory(name='the_same_name', field1='some')
+
+    def test_remove_duplicates(self):
+        self.assertEqual(2, ExampleModel.objects.all().count())
+        remove_duplicates_from_model(unique_fields=['name'], model_class=ExampleModel)
+        self.assertEqual(1, ExampleModel.objects.all().count())
+
+    def test_remove_duplicates_with_others_different_fields(self):
+        ExampleModelFactory(name='the_same_name', field1='other')
+        ExampleModelFactory(name='the_same_name', field1='some')
+        self.assertEqual(4, ExampleModel.objects.all().count())
+        remove_duplicates_from_model(unique_fields=['name'], model_class=ExampleModel)
+        self.assertEqual(1, ExampleModel.objects.all().count())
