@@ -1,2 +1,4 @@
-# django-generic
-Generic helpers for Django framework
+django-generic
+==============
+
+Django generic helpers used in my private projects.
