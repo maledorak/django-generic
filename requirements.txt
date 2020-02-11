@@ -1,4 +1,4 @@
-django==2.1.0
+django==2.2.10
 factory_boy==2.11.1
 pillow==5.2.0
 requests==2.18.4
